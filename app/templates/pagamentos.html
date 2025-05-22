@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Pagamentos - Sistema NFE{% endblock %}
+
+{% block content %}
+<h1>Pagamentos</h1>
+<a href="/pagamentos/novo" class="btn btn-primary mb-3">Novo Pagamento</a>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>ID Venda</th>
+      <th>Valor</th>
+      <th>Data</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for pagamento in pagamentos %}
+    <tr>
+      <td>{{ pagamento.id }}</td>
+      <td>{{ pagamento.venda_id }}</td>
+      <td>R$ {{ "%.2f"|format(pagamento.valor) }}</td>
+      <td>{{ pagamento.data.strftime("%d/%m/%Y") }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

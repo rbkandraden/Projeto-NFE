@@ -1,9 +1,33 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash
 from .models import Cliente, db
 
-clientes_bp = Blueprint('clientes', __name__)
+clientes_bp = Blueprint('clientes', __name__, url_prefix='/clientes')
 
-@clientes_bp.route('/clientes/', methods=['POST'])
+# --- Rotas HTML ---
+
+@clientes_bp.route('/', methods=['GET'])
+def pagina_clientes():
+    clientes = Cliente.query.all()
+    return render_template('clientes.html', clientes=clientes)
+
+@clientes_bp.route('/adicionar', methods=['POST'])
+def adicionar_cliente():
+    nome = request.form.get('nome')
+    cnpj = request.form.get('cnpj')
+
+    if not nome or not cnpj:
+        flash('Nome e CNPJ são obrigatórios.', 'error')
+        return redirect(url_for('clientes.pagina_clientes'))
+
+    cliente = Cliente(nome=nome, cnpj=cnpj)
+    db.session.add(cliente)
+    db.session.commit()
+    flash('Cliente adicionado com sucesso!', 'success')
+    return redirect(url_for('clientes.pagina_clientes'))
+
+# --- Rotas API (JSON) ---
+
+@clientes_bp.route('/api/', methods=['POST'])
 def criar_cliente():
     data = request.json
     cliente = Cliente(
@@ -14,12 +38,12 @@ def criar_cliente():
     db.session.commit()
     return jsonify(cliente.to_dict()), 201
 
-@clientes_bp.route('/clientes/', methods=['GET'])
+@clientes_bp.route('/api/', methods=['GET'])
 def listar_clientes():
     clientes = Cliente.query.all()
     return jsonify([c.to_dict() for c in clientes])
 
-@clientes_bp.route('/clientes/<int:id>', methods=['PUT'])
+@clientes_bp.route('/api/<int:id>', methods=['PUT'])
 def atualizar_cliente(id):
     cliente = Cliente.query.get_or_404(id)
     data = request.json
@@ -28,7 +52,7 @@ def atualizar_cliente(id):
     db.session.commit()
     return jsonify(cliente.to_dict())
 
-@clientes_bp.route('/clientes/<int:id>', methods=['DELETE'])
+@clientes_bp.route('/api/<int:id>', methods=['DELETE'])
 def deletar_cliente(id):
     cliente = Cliente.query.get_or_404(id)
     db.session.delete(cliente)

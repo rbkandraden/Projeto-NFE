@@ -1,8 +1,12 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash
 from app import db
 from app.models import Produto
 
 produtos_bp = Blueprint('produtos', __name__, url_prefix='/produtos')
+
+# ====================
+# === ROTAS - JSON ===
+# ====================
 
 @produtos_bp.route('/', methods=['GET'])
 def listar_produtos():
@@ -42,3 +46,29 @@ def deletar_produto(id):
     db.session.delete(produto)
     db.session.commit()
     return '', 204
+
+# ===========================
+# === ROTAS - TEMPLATE HTML
+# ===========================
+
+@produtos_bp.route('/lista', methods=['GET'])
+def pagina_produtos():
+    produtos = Produto.query.all()
+    return render_template('produtos.html', produtos=produtos)
+
+@produtos_bp.route('/novo', methods=['GET', 'POST'])
+def formulario_produto():
+    if request.method == 'POST':
+        try:
+            nome = request.form['nome']
+            preco = float(request.form['preco'])
+            estoque = int(request.form['estoque'])
+            novo = Produto(nome=nome, preco=preco, estoque=estoque)
+            db.session.add(novo)
+            db.session.commit()
+            flash('Produto cadastrado com sucesso!', 'success')
+            return redirect(url_for('produtos.pagina_produtos'))
+        except Exception as e:
+            flash(f'Erro ao cadastrar produto: {e}', 'danger')
+            return redirect(url_for('produtos.formulario_produto'))
+    return render_template('produto_form.html')

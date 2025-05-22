@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Produtos - Sistema NFE{% endblock %}
+{% block content %}
+<h1>Produtos</h1>
+<a href="/produtos/novo" class="btn btn-primary mb-3">Novo Produto</a>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nome</th>
+      <th>Preço</th>
+      <th>Estoque</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for produto in produtos %}
+    <tr>
+      <td>{{ produto.id }}</td>
+      <td>{{ produto.nome }}</td>
+      <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
+      <td>{{ produto.estoque }}</td>
+      <td>
+        <a href="/produtos/{{ produto.id }}/editar" class="btn btn-sm btn-warning">Editar</a>
+        <a href="/produtos/{{ produto.id }}/deletar" class="btn btn-sm btn-danger">Excluir</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

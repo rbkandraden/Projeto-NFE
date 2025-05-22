@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Vendas{% endblock %}
+
+{% block content %}
+<h2>Vendas</h2>
+
+<!-- Formulário para adicionar venda -->
+<form id="form-venda" method="post" action="/vendas/adicionar">
+    <label for="cliente_id">Cliente:</label>
+    <select id="cliente_id" name="cliente_id" required>
+        {% for cliente in clientes %}
+        <option value="{{ cliente.id }}">{{ cliente.nome }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="produto_id">Produto:</label>
+    <select id="produto_id" name="produto_id" required>
+        {% for produto in produtos %}
+        <option value="{{ produto.id }}">{{ produto.nome }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="quantidade">Quantidade:</label>
+    <input type="number" id="quantidade" name="quantidade" min="1" value="1" required>
+
+    <button type="submit">Registrar Venda</button>
+</form>
+
+<hr>
+
+<!-- Lista de vendas -->
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Data</th>
+        </tr>
+    </thead>
+    <tbody id="lista-vendas">
+        {% for venda in vendas %}
+        <tr>
+            <td>{{ venda.id }}</td>
+            <td>{{ venda.cliente.nome }}</td>
+            <td>{{ venda.produto.nome }}</td>
+            <td>{{ venda.quantidade }}</td>
+            <td>{{ venda.data.strftime('%Y-%m-%d') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
