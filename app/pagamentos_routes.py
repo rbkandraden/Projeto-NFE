@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash
+from flask_login import login_required
 from datetime import datetime
 from .models import Pagamento, db
 
@@ -53,32 +54,60 @@ def deletar_pagamento(id):
 # ===========================
 
 @pagamentos_bp.route('/lista', methods=['GET'])
+@login_required
 def pagina_pagamentos():
     pagamentos = Pagamento.query.order_by(Pagamento.data.desc()).all()
     return render_template('pagamentos.html', pagamentos=pagamentos)
 
 @pagamentos_bp.route('/novo', methods=['GET', 'POST'])
+@login_required
 def formulario_pagamento():
     if request.method == 'POST':
-        try:
-            venda_id = int(request.form['venda_id'])
-            valor = float(request.form['valor'])
-            data = datetime.strptime(request.form['data'], '%Y-%m-%d').date()
-            quitado = 'quitado' in request.form
+        venda_id = request.form['venda_id']
+        valor = float(request.form['valor'])
+        quitado = request.form.get('quitado') == 'True'
 
-            novo_pagamento = Pagamento(
-                venda_id=venda_id,
-                valor=valor,
-                data=data,
-                quitado=quitado
-            )
-            db.session.add(novo_pagamento)
-            db.session.commit()
-            flash('Pagamento registrado com sucesso!', 'success')
-            return redirect(url_for('pagamentos.pagina_pagamentos'))
-
-        except Exception as e:
-            flash(f'Erro ao salvar pagamento: {e}', 'danger')
+        # Validação simples
+        if not venda_id or valor <= 0:
+            flash('Preencha todos os campos corretamente.', 'danger')
             return redirect(url_for('pagamentos.formulario_pagamento'))
 
+        novo = Pagamento(venda_id=venda_id, valor=valor, quitado=quitado)
+        db.session.add(novo)
+        db.session.commit()
+        flash('Pagamento registrado com sucesso!', 'success')
+        return redirect(url_for('pagamentos.pagina_pagamentos'))
     return render_template('pagamento_form.html')
+
+@pagamentos_bp.route('/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
+def editar_pagamento(id):
+    pagamento = Pagamento.query.get_or_404(id)
+
+    if request.method == 'POST':
+        pagamento.valor = request.form['valor']
+        pagamento.quitado = request.form.get('quitado') == 'True'
+
+        db.session.commit()
+        flash('Pagamento atualizado com sucesso!', 'success')
+        return redirect(url_for('pagamentos.pagina_pagamentos'))
+
+    return render_template('pagamento_edit.html', pagamento=pagamento)
+
+@pagamentos_bp.route('/excluir/<int:id>', methods=['POST', 'GET'])
+@login_required
+def excluir_pagamento(id):
+    pagamento = Pagamento.query.get_or_404(id)
+
+    if request.method == 'POST':
+        db.session.delete(pagamento)
+        db.session.commit()
+        flash('Pagamento excluído com sucesso!', 'success')
+        return redirect(url_for('pagamentos.pagina_pagamentos'))
+
+    return render_template('pagamento_excluir.html', pagamento=pagamento)
+
+@pagamentos_bp.route('/estoque')
+def saldo_estoque():
+    produtos = Produto.query.order_by(Produto.marca, Produto.nome).all()
+    return render_template('estoque.html', produtos=produtos)

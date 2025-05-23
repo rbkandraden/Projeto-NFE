@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Saldo de Estoque{% endblock %}
+{% block content %}
+<h2>Saldo de Estoque</h2>
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Produto</th>
+      <th>Marca</th>
+      <th>Estoque Atual</th>
+      <th>Estoque Mínimo</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for produto in produtos %}
+    <tr>
+      <td>{{ produto.nome }}</td>
+      <td>{{ produto.marca }}</td>
+      <td {% if produto.estoque <= produto.estoque_minimo %}class="table-danger"{% endif %}>
+        {{ produto.estoque }}
+        {% if produto.estoque <= produto.estoque_minimo %}
+          <span class="badge bg-danger">Baixo</span>
+        {% endif %}
+      </td>
+      <td>{{ produto.estoque_minimo }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

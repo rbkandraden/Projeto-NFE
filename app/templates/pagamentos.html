@@ -12,6 +12,7 @@
       <th>ID Venda</th>
       <th>Valor</th>
       <th>Data</th>
+      <th>Quitado</th>
     </tr>
   </thead>
   <tbody>
@@ -21,6 +22,7 @@
       <td>{{ pagamento.venda_id }}</td>
       <td>R$ {{ "%.2f"|format(pagamento.valor) }}</td>
       <td>{{ pagamento.data.strftime("%d/%m/%Y") }}</td>
+      <td>{{ 'Sim' if pagamento.quitado else 'Não' }}</td>
     </tr>
     {% endfor %}
   </tbody>

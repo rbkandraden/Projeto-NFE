@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Novo Pagamento{% endblock %}
+{% block content %}
+<h2>Novo Pagamento</h2>
+<form method="post" action="/pagamentos/novo">
+  <div class="mb-3">
+    <label for="venda_id" class="form-label">Venda:</label>
+    <input type="number" class="form-control" id="venda_id" name="venda_id" required>
+  </div>
+  <div class="mb-3">
+    <label for="valor" class="form-label">Valor:</label>
+    <input type="number" step="0.01" class="form-control" id="valor" name="valor" required>
+  </div>
+  <div class="mb-3">
+    <label for="quitado" class="form-label">Quitado:</label>
+    <select class="form-control" id="quitado" name="quitado">
+      <option value="True">Sim</option>
+      <option value="False">Não</option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Salvar</button>
+  <a href="{{ url_for('pagamentos.pagina_pagamentos') }}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

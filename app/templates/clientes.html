@@ -5,12 +5,20 @@
 <h2>Clientes</h2>
 
 <!-- Formulário para adicionar cliente -->
-<form id="form-cliente" method="post" action="/clientes/adicionar">
-    <label for="nome">Nome:</label>
-    <input type="text" id="nome" name="nome" required>
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
-    <button type="submit">Adicionar Cliente</button>
+<form id="form-cliente" method="post" action="/clientes/adicionar" class="mb-4">
+  <div class="mb-3">
+    <label for="nome" class="form-label">Nome:</label>
+    <input type="text" class="form-control" id="nome" name="nome" required>
+  </div>
+  <div class="mb-3">
+    <label for="email" class="form-label">Email:</label>
+    <input type="email" class="form-control" id="email" name="email" required>
+  </div>
+  <div class="mb-3">
+    <label for="cnpj" class="form-label">CNPJ:</label>
+    <input type="text" class="form-control" id="cnpj" name="cnpj">
+  </div>
+  <button type="submit" class="btn btn-primary">Adicionar Cliente</button>
 </form>
 
 <hr>

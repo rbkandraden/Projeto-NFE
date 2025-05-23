@@ -4,6 +4,12 @@
 <h1>Produtos</h1>
 <a href="/produtos/novo" class="btn btn-primary mb-3">Novo Produto</a>
 
+<form method="get" action="{{ url_for('produtos.pagina_produtos') }}">
+  <input type="checkbox" name="baixo_estoque" value="1" {% if request.args.get('baixo_estoque') %}checked{% endif %}>
+  Mostrar apenas produtos com estoque baixo
+  <button type="submit" class="btn btn-sm btn-primary">Filtrar</button>
+</form>
+
 <table class="table table-striped">
   <thead>
     <tr>
@@ -11,19 +17,24 @@
       <th>Nome</th>
       <th>Preço</th>
       <th>Estoque</th>
+      <th>Marca</th>
       <th>Ações</th>
     </tr>
   </thead>
   <tbody>
     {% for produto in produtos %}
-    <tr>
+    <tr {% if produto.estoque <= produto.estoque_minimo %}class="table-danger"{% endif %}>
       <td>{{ produto.id }}</td>
       <td>{{ produto.nome }}</td>
       <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
       <td>{{ produto.estoque }}</td>
+      <td>{{ produto.marca }}</td>
       <td>
         <a href="/produtos/{{ produto.id }}/editar" class="btn btn-sm btn-warning">Editar</a>
-        <a href="/produtos/{{ produto.id }}/deletar" class="btn btn-sm btn-danger">Excluir</a>
+        <a href="/produtos/{{ produto.id }}/deletar" class="btn btn-sm btn-danger"
+           onclick="return confirm('Tem certeza que deseja excluir este produto?');">
+           Excluir
+        </a>
       </td>
     </tr>
     {% endfor %}

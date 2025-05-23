@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Importar NF-e XML{% endblock %}
+{% block content %}
+<h2>Importar NF-e (XML)</h2>
+<form method="post" enctype="multipart/form-data">
+  <input type="file" name="xmlfile" accept=".xml" required>
+  <button type="submit" class="btn btn-primary">Importar</button>
+</form>
+{% endblock %}

@@ -1,26 +1,27 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from config import Config
-
-db = SQLAlchemy()
-migrate = Migrate()
+from flask_login import LoginManager
+from .models import db
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)
-
-    # Para usar flash messages nos templates
-    app.secret_key = 'sua_chave_secreta_aqui'  # substitua por uma chave segura
+    app.config.from_object('config.Config')
 
     db.init_app(app)
-    migrate.init_app(app, db)
 
-    # Rotas principais
+    Migrate(app, db)
+
+    login_manager = LoginManager()
+    login_manager.login_view = 'auth.login'
+    login_manager.init_app(app)
+
+    # Registre todos os blueprints
+    from .auth_routes import auth_bp
+    app.register_blueprint(auth_bp)
+
     from .routes import main
     app.register_blueprint(main)
 
-    # Módulos do sistema
     from .produtos_routes import produtos_bp
     app.register_blueprint(produtos_bp)
 
@@ -32,5 +33,16 @@ def create_app():
 
     from .pagamentos_routes import pagamentos_bp
     app.register_blueprint(pagamentos_bp)
+
+    from .index import index_bp
+    app.register_blueprint(index_bp)
+
+    from .importa_nfe_routes import importa_nfe_bp
+    app.register_blueprint(importa_nfe_bp)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        from .models import Usuario  # Importa Usuario só aqui, para evitar ciclo
+        return Usuario.query.get(int(user_id))
 
     return app

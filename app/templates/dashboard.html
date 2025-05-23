@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Bem-vindo ao Dashboard!</h2>
+<p>Você está autenticado no sistema.</p>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="card text-bg-primary mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Acesso rápido</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ url_for('produtos.pagina_produtos') }}" class="text-white">Produtos</a></li>
+          <li><a href="{{ url_for('clientes.pagina_clientes') }}" class="text-white">Clientes</a></li>
+          <li><a href="{{ url_for('vendas.pagina_vendas') }}" class="text-white">Vendas</a></li>
+          <li><a href="{{ url_for('pagamentos.pagina_pagamentos') }}" class="text-white">Pagamentos</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
